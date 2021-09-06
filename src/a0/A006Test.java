@@ -29,4 +29,15 @@ public class A006Test {
 
         assertThat(actual).isEqualTo(expect);
     }
+    
+    @Test
+    public void a006Test_case_03() throws Exception{
+        
+        int[] priorities = new int[]{3, 1, 9, 1};
+        int location = 1;
+        int expect = 3;
+        int actual = solution.solution(priorities, location);
+
+        assertThat(actual).isEqualTo(expect);
+    }
 }
