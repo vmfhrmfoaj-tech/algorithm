@@ -1,61 +1,50 @@
 package a0;
 
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class A006 {
 
-    class Item{
-
-        final int value;
-        final boolean target;
-
-        public Item(int value, boolean target) {
-            this.value = value;
-            this.target = target;
-        }
-    }
-
-    private boolean isGreatFirstValue(Item base, List<Item> list){
-        for(Item cur : list){
-            if( base.value < cur.value){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public int solution(int[] priorities, int location) {
 
-        List<Item> items = IntStream.range(0, priorities.length)
-            .mapToObj(i->new Item(priorities[i], (i==location)))
-            .collect(Collectors.toList());
+        Queue<Document> queue = IntStream.range(0, priorities.length)
+                .mapToObj(i->new Document(i, priorities[i]))
+                .collect(Collectors.toCollection(LinkedList::new));
+
 
         int printed = 0;
+            
+        System.out.println();
+        System.out.println("(" + printed + ") S : " + queue.stream().map(x->String.valueOf(x.priority + (location==x.id?"T":""))).collect(Collectors.joining(", ")) );
 
-        System.out.println("(" + printed + ") S : " + items.stream().map(x->String.valueOf(x.value + (x.target?"T":""))).collect(Collectors.joining(", ")) );
+        while(!queue.isEmpty()){
 
-        for(;0!=items.size(); ){
+            Document doc = queue.poll();
 
-            Item cur = items.remove(0);
-
-            if( isGreatFirstValue(cur, items) ){
+            if( !queue.stream().anyMatch(x -> x.priority > doc.priority ) ){
                 printed++;
-                System.out.println("(" + printed + ") Printed. => " + cur.value);
-                if( cur.target == true ){
+                System.out.println("(" + printed + ") Printed. => " + doc.priority);
+                if(doc.id == location){
                     System.out.println("(" + printed + ") Finish.");
                     break;
                 }
             }else{
-                items.add(cur);
-                System.out.println("(" + printed + ") N : " + items.stream().map(x->String.valueOf(x.value + (x.target?"T":""))).collect(Collectors.joining(", ")) );
+                queue.add(doc);
+                System.out.println("(" + printed + ") N : " + queue.stream().map(x->String.valueOf(x.priority + (location==x.id?"T":""))).collect(Collectors.joining(", ")) );
             }
         }
-
-        System.out.println();
         
         return printed;
+    }
+
+    class Document {
+        final int id;
+        final int priority;
+        public Document(int id, int priority) {
+            this.id = id;
+            this.priority = priority;
+        }
     }
 }
